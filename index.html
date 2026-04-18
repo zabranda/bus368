@@ -24,56 +24,11 @@
       width: fit-content;
       max-width: min(1100px, 96vw);
       box-sizing: border-box;
-      vertical-align: top;
       background: #1b2030;
       border: 1px solid #2a3147;
       border-radius: 14px;
       padding: 1.2rem;
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
-    }
-
-    .columns {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: flex-start;
-      gap: 1rem 1.25rem;
-      width: fit-content;
-      max-width: 100%;
-    }
-
-    .col {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 0.75rem;
-      flex: 1 1 0;
-      min-width: max-content;
-      max-width: 100%;
-      box-sizing: border-box;
-    }
-
-    @media (max-width: 780px) {
-      .columns {
-        flex-direction: column;
-        width: 100%;
-      }
-
-      .col {
-        flex: 0 0 auto;
-        min-width: 0;
-        width: 100%;
-      }
-    }
-
-    .col-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #8b9ac4;
-      margin: 0;
-      width: 100%;
     }
 
     h1 {
@@ -86,10 +41,61 @@
       margin: 0.25rem 0 0.8rem;
     }
 
-    .value {
-      font-size: 1.5rem;
+    .columns {
+      display: flex;
+      flex-direction: row;
+      gap: 1.25rem;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    @media (max-width: 780px) {
+      .columns {
+        flex-direction: column;
+        width: 100%;
+      }
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      min-width: 220px;
+    }
+
+    .col-header {
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
       font-weight: 700;
-      margin: 0.3rem 0;
+      font-size: 1rem;
+    }
+
+    .col-header .icon {
+      font-size: 1.8rem;
+    }
+
+    .col-header .label {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.85rem;
+      font-weight: 400;
+      opacity: 0.85;
+    }
+
+    .col-header .label strong {
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .col--dablice .col-header {
+      background: linear-gradient(135deg, #1a4fa0, #2e6fd4);
+    }
+
+    .col--predboj .col-header {
+      background: linear-gradient(135deg, #1a6b3a, #2ea855);
     }
 
     .box {
@@ -97,14 +103,33 @@
       border-radius: 10px;
       padding: 0.8rem;
       background: #151a28;
-      width: 100%;
       box-sizing: border-box;
-      overflow-wrap: anywhere;
+    }
+
+    .box-label {
+      font-size: 0.8rem;
+      color: #8b9ac4;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.3rem;
+    }
+
+    .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0.2rem 0;
+    }
+
+    .sub {
+      color: #b6bfd8;
+      font-size: 0.85rem;
+      margin: 0;
     }
 
     .status {
       margin-top: 0.8rem;
       color: #cbd3ea;
+      font-size: 0.85rem;
     }
   </style>
 </head>
@@ -114,40 +139,52 @@
     <p class="muted">Živé odjezdy ze zastávky Líbeznice,II.</p>
 
     <div class="columns">
-      <div class="col">
-        <p class="col-title">→ Praha, Sídliště Ďáblice</p>
+      <div class="col col--dablice">
+        <div class="col-header">
+          <span class="icon">🏐</span>
+          <div class="label">
+            <strong>Sídliště Ďáblice</strong>
+            na beach volejbal
+          </div>
+        </div>
 
-        <section class="box">
-          <div class="muted">Nejbližší spoj</div>
+        <div class="box">
+          <div class="box-label">Nejbližší spoj</div>
           <div id="dablice1time" class="value">Načítám…</div>
-          <div id="dablice1minutes" class="muted"></div>
-          <div id="dablice1line" class="muted"></div>
-        </section>
+          <div id="dablice1minutes" class="sub"></div>
+          <div id="dablice1line" class="sub"></div>
+        </div>
 
-        <section class="box">
-          <div class="muted">Druhý nejbližší spoj</div>
+        <div class="box">
+          <div class="box-label">Druhý nejbližší spoj</div>
           <div id="dablice2time" class="value">—</div>
-          <div id="dablice2minutes" class="muted"></div>
-          <div id="dablice2line" class="muted"></div>
-        </section>
+          <div id="dablice2minutes" class="sub"></div>
+          <div id="dablice2line" class="sub"></div>
+        </div>
       </div>
 
-      <div class="col">
-        <p class="col-title">→ Předboj, U Rybníka</p>
+      <div class="col col--predboj">
+        <div class="col-header">
+          <span class="icon">🏠</span>
+          <div class="label">
+            <strong>Předboj</strong>
+            domů
+          </div>
+        </div>
 
-        <section class="box">
-          <div class="muted">Nejbližší spoj</div>
+        <div class="box">
+          <div class="box-label">Nejbližší spoj</div>
           <div id="predboj1time" class="value">Načítám…</div>
-          <div id="predboj1minutes" class="muted"></div>
-          <div id="predboj1line" class="muted"></div>
-        </section>
+          <div id="predboj1minutes" class="sub"></div>
+          <div id="predboj1line" class="sub"></div>
+        </div>
 
-        <section class="box">
-          <div class="muted">Druhý nejbližší spoj</div>
+        <div class="box">
+          <div class="box-label">Druhý nejbližší spoj</div>
           <div id="predboj2time" class="value">—</div>
-          <div id="predboj2minutes" class="muted"></div>
-          <div id="predboj2line" class="muted"></div>
-        </section>
+          <div id="predboj2minutes" class="sub"></div>
+          <div id="predboj2line" class="sub"></div>
+        </div>
       </div>
     </div>
 
@@ -187,10 +224,6 @@
         .replace(/[\u0300-\u036f]/g, "")
         .toLowerCase()
         .trim();
-    }
-
-    function setStatus(msg) {
-      ui.status.textContent = msg;
     }
 
     function formatPragueTime(isoDate) {
@@ -249,7 +282,7 @@
     }
 
     async function refresh() {
-      setStatus("Načítám živá data…");
+      ui.status.textContent = "Načítám živá data…";
       try {
         const params = new URLSearchParams();
         params.append("names[]", CONFIG.stopName);
@@ -276,9 +309,9 @@
         renderBox(ui.predboj1time, ui.predboj1minutes, ui.predboj1line, departureToSummary(predbojMatches[0]), "Žádný spoj");
         renderBox(ui.predboj2time, ui.predboj2minutes, ui.predboj2line, departureToSummary(predbojMatches[1]), "—");
 
-        setStatus(`Aktualizováno: ${new Date().toLocaleTimeString("cs-CZ")}`);
+        ui.status.textContent = `Aktualizováno: ${new Date().toLocaleTimeString("cs-CZ")}`;
       } catch (err) {
-        setStatus(`Chyba: ${err.message}`);
+        ui.status.textContent = `Chyba: ${err.message}`;
       }
     }
 
