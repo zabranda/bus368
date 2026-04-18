@@ -194,7 +194,7 @@
   <script>
     const CONFIG = {
       stopName: "Líbeznice,II",
-      dabliceDestination: "sidliste dablice",
+      dabliceDestination: "dablice",
       predbojDestination: "predboj",
       predbojLine: "368",
       refreshMs: 20000,
@@ -295,6 +295,8 @@
         const board = await fetchFromProxy("/v2/pid/departureboards", params);
         const departures = board?.departures || [];
 
+        console.log("[DEBUG] All departures headsigns:", departures.map(d => d?.trip?.headsign));
+
         const dabliceMatches = departures.filter(d =>
           normalizeText(d?.trip?.headsign || "").includes(CONFIG.dabliceDestination)
         );
@@ -303,6 +305,9 @@
           String(d?.route?.short_name || "") === CONFIG.predbojLine &&
           normalizeText(d?.trip?.headsign || "").includes(CONFIG.predbojDestination)
         );
+
+        console.log("[DEBUG] Dablice matches:", dabliceMatches.length);
+        console.log("[DEBUG] Predboj matches:", predbojMatches.length);
 
         renderBox(ui.dablice1time, ui.dablice1minutes, ui.dablice1line, departureToSummary(dabliceMatches[0]), "Žádný spoj");
         renderBox(ui.dablice2time, ui.dablice2minutes, ui.dablice2line, departureToSummary(dabliceMatches[1]), "—");
