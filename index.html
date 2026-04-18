@@ -229,16 +229,48 @@
           proxyParams.append(key, value);
         }
       }
-      const response = await fetch(`${CONFIG.proxyEndpoint}?${proxyParams.toString()}`);
+      const query = proxyParams.toString();
+      const relativeUrl = `${CONFIG.proxyEndpoint}?${query}`;
+      const fullProxyUrl = new URL(relativeUrl, window.location.origin).href;
+      const upstreamQuery = params ? params.toString() : "";
+      const upstreamGolemioUrl = `https://api.golemio.cz${path}${upstreamQuery ? `?${upstreamQuery}` : ""}`;
+
+      console.log("[PID DEBUG] Proxy request URL (exact fetch URL):", fullProxyUrl);
+      console.log("[PID DEBUG] Equivalent upstream Golemio URL:", upstreamGolemioUrl);
+
+      const response = await fetch(relativeUrl);
+      const rawText = await response.text();
+      console.log("[PID DEBUG] Raw response status:", response.status);
+      console.log("[PID DEBUG] Raw response body:", rawText);
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status} from proxy request`);
       }
-      return response.json();
+
+      let parsed;
+      try {
+        parsed = JSON.parse(rawText);
+      } catch (e) {
+        throw new Error(`Invalid JSON from proxy: ${e.message}`);
+      }
+      return parsed;
     }
 
     function getMatchingDepartures(board) {
       const departures = board?.departures || [];
       const wantedDestination = normalizeText(CONFIG.destinationText);
+      const line368Departures = departures.filter(
+        (item) => String(item?.route?.short_name || "") === CONFIG.lineShortName
+      );
+
+      console.log("[PID DEBUG] Desired normalized destination:", wantedDestination);
+      console.log("[PID DEBUG] Total departures returned:", departures.length);
+      console.log("[PID DEBUG] Bus 368 departures (headsign + predicted):", line368Departures.map((item) => ({
+        headsign: item?.trip?.headsign || "",
+        normalizedHeadsign: normalizeText(item?.trip?.headsign || ""),
+        predicted: item?.departure_timestamp?.predicted || item?.departure_timestamp?.scheduled || null,
+        minutes: item?.departure_timestamp?.minutes || null
+      })));
 
       return departures.filter((item) => {
         const line = String(item?.route?.short_name || "");
@@ -287,7 +319,11 @@
       params.append("mode", "departures");
 
       const board = await fetchFromProxy("/v2/pid/departureboards", params);
+      console.log("[PID DEBUG] Raw departureboard response:", board);
       const matches = getMatchingDepartures(board);
+      if (!matches.length) {
+        console.warn("[PID DEBUG] No matching departure found for configured line and destination.");
+      }
 
       return {
         first: departureToSummary(matches[0] || null),
@@ -339,7 +375,9 @@
       params.append("mode", "mixed");
 
       const board = await fetchFromProxy("/v2/pid/departureboards", params);
-      return getTripStopPrediction(board, tripId);
+      const result = getTripStopPrediction(board, tripId);
+      console.log(`[PID DEBUG] ETA lookup for ${stopName}:`, { tripId, result, board });
+      return result;
     }
 
     function renderFirstDeparture(next) {
