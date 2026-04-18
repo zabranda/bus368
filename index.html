@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bus 368 — Předboj, U Rybníka → Ládví</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #121521;
+      color: #f2f5ff;
+    }
+
+    .card {
+      display: inline-block;
+      width: fit-content;
+      max-width: min(1100px, 96vw);
+      box-sizing: border-box;
+      vertical-align: top;
+      background: #1b2030;
+      border: 1px solid #2a3147;
+      border-radius: 14px;
+      padding: 1.2rem;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    .columns {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: flex-start;
+      gap: 1rem 1.25rem;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+      flex: 1 1 0;
+      min-width: max-content;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 780px) {
+      .columns {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .col {
+        flex: 0 0 auto;
+        min-width: 0;
+        width: 100%;
+      }
+    }
+
+    .col-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #8b9ac4;
+      margin: 0;
+      width: 100%;
+    }
+
+    h1 {
+      margin: 0 0 0.4rem;
+      font-size: 1.3rem;
+    }
+
+    .muted {
+      color: #b6bfd8;
+      margin: 0.25rem 0 0.8rem;
+    }
+
+    .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0.3rem 0;
+    }
+
+    .box {
+      border: 1px solid #2f3750;
+      border-radius: 10px;
+      padding: 0.8rem;
+      background: #151a28;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-wrap: anywhere;
+    }
+
+    .status {
+      margin-top: 0.8rem;
+      color: #cbd3ea;
+    }
+
+    a {
+      color: #8bb2ff;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Bus 368: Předboj, U Rybníka → Ládví</h1>
+    <p class="muted">Živé odjezdy a předpokládané příjezdy na trase směr Ládví.</p>
+
+    <div class="columns">
+      <div class="col col--left">
+        <p class="col-title">Nejbližší spoj</p>
+        <section class="box">
+          <div class="muted">Odjezd z Předboj, U Rybníka</div>
+          <div id="departureTime" class="value">Načítám data…</div>
+          <div id="departureMinutes" class="muted"></div>
+          <div id="headsign1" class="muted"></div>
+        </section>
+
+        <section class="box">
+          <div class="muted">Příjezd do zastávky Líbeznice</div>
+          <div id="libezniceTime" class="value" style="font-size:1.05rem;">Načítám data…</div>
+          <div id="libezniceMinutes" class="muted"></div>
+        </section>
+
+        <section class="box">
+          <div class="muted">Příjezd do zastávky Ládví</div>
+          <div id="ladviTime" class="value" style="font-size:1.05rem;">Načítám data…</div>
+          <div id="ladviMinutes" class="muted"></div>
+        </section>
+      </div>
+
+      <div class="col col--right">
+        <p class="col-title">Druhý nejbližší spoj</p>
+        <section class="box">
+          <div class="muted">Odjezd z Předboj, U Rybníka</div>
+          <div id="departureTime2" class="value">—</div>
+          <div id="departureMinutes2" class="muted"></div>
+          <div id="headsign2" class="muted"></div>
+        </section>
+
+        <section class="box">
+          <div class="muted">Příjezd do zastávky Líbeznice</div>
+          <div id="libezniceTime2" class="value" style="font-size:1.05rem;">—</div>
+          <div id="libezniceMinutes2" class="muted"></div>
+        </section>
+
+        <section class="box">
+          <div class="muted">Příjezd do zastávky Ládví</div>
+          <div id="ladviTime2" class="value" style="font-size:1.05rem;">—</div>
+          <div id="ladviMinutes2" class="muted"></div>
+        </section>
+      </div>
+    </div>
+
+    <p id="status" class="status"></p>
+  </main>
+
+  <script>
+    const CONFIG = {
+      stopName: "Předboj, U Rybníka",
+      lineShortName: "368",
+      destinationText: "Ládví",
+      intermediateStop: "Líbeznice",
+      terminusStop: "Ládví",
+      refreshMs: 20000,
+      timezone: "Europe/Prague",
+      proxyEndpoint: "/api/golemio"
+    };
+
+    const ui = {
+      departureTime: document.getElementById("departureTime"),
+      departureMinutes: document.getElementById("departureMinutes"),
+      headsign1: document.getElementById("headsign1"),
+      libezniceTime: document.getElementById("libezniceTime"),
+      libezniceMinutes: document.getElementById("libezniceMinutes"),
+      ladviTime: document.getElementById("ladviTime"),
+      ladviMinutes: document.getElementById("ladviMinutes"),
+      departureTime2: document.getElementById("departureTime2"),
+      departureMinutes2: document.getElementById("departureMinutes2"),
+      headsign2: document.getElementById("headsign2"),
+      libezniceTime2: document.getElementById("libezniceTime2"),
+      libezniceMinutes2: document.getElementById("libezniceMinutes2"),
+      ladviTime2: document.getElementById("ladviTime2"),
+      ladviMinutes2: document.getElementById("ladviMinutes2"),
+      status: document.getElementById("status")
+    };
+
+    let timerId = null;
+
+    function normalizeText(value) {
+      return (value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
+
+    function setStatus(message) {
+      ui.status.textContent = message;
+    }
+
+    function formatPragueTime(isoDate) {
+      const date = new Date(isoDate);
+      return new Intl.DateTimeFormat("cs-CZ", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZone: CONFIG.timezone
+      }).format(date);
+    }
+
+    async function fetchFromProxy(path, params) {
+      const proxyParams = new URLSearchParams();
+      proxyParams.append("path", path);
+      if (params) {
+        const src = new URLSearchParams(params);
+        for (const [key, value] of src.entries()) {
+          proxyParams.append(key, value);
+        }
+      }
+      const response = await fetch(`${CONFIG.proxyEndpoint}?${proxyParams.toString()}`);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status} from proxy request`);
+      }
+      return response.json();
+    }
+
+    function getMatchingDepartures(board) {
+      const departures = board?.departures || [];
+      const wantedDestination = normalizeText(CONFIG.destinationText);
+
+      return departures.filter((item) => {
+        const line = String(item?.route?.short_name || "");
+        const headsign = normalizeText(item?.trip?.headsign || "");
+        return line === CONFIG.lineShortName && headsign.includes(wantedDestination);
+      });
+    }
+
+    function departureToSummary(departure) {
+      if (!departure) {
+        return null;
+      }
+      const predicted =
+        departure?.departure_timestamp?.predicted ||
+        departure?.departure_timestamp?.scheduled ||
+        null;
+      return {
+        tripId: departure?.trip?.id || null,
+        headsign: departure?.trip?.headsign || "",
+        predicted,
+        minutes:
+          departure?.departure_timestamp?.minutes ??
+          (predicted ? getMinutesFromNow(predicted) : null),
+        delaySeconds: departure?.delay?.seconds || null
+      };
+    }
+
+    function getMinutesFromNow(isoDate) {
+      if (!isoDate) {
+        return null;
+      }
+      const targetMs = new Date(isoDate).getTime();
+      if (Number.isNaN(targetMs)) {
+        return null;
+      }
+      return Math.round((targetMs - Date.now()) / 60000);
+    }
+
+    async function fetchBusDeparturesFromOrigin() {
+      const params = new URLSearchParams();
+      params.append("names[]", CONFIG.stopName);
+      params.append("minutesBefore", "1");
+      params.append("minutesAfter", "90");
+      params.append("order", "real");
+      params.append("limit", "80");
+      params.append("mode", "departures");
+
+      const board = await fetchFromProxy("/v2/pid/departureboards", params);
+      const matches = getMatchingDepartures(board);
+
+      return {
+        first: departureToSummary(matches[0] || null),
+        second: departureToSummary(matches[1] || null)
+      };
+    }
+
+    function getTripStopPrediction(board, tripId) {
+      const departures = board?.departures || [];
+      if (!tripId) {
+        return null;
+      }
+
+      const item =
+        departures.find((departure) => {
+          const line = String(departure?.route?.short_name || "");
+          const depTripId = departure?.trip?.id || "";
+          return line === CONFIG.lineShortName && depTripId === tripId;
+        }) || null;
+
+      if (!item) {
+        return null;
+      }
+
+      const predicted =
+        item?.departure_timestamp?.predicted ||
+        item?.arrival_timestamp?.predicted ||
+        item?.departure_timestamp?.scheduled ||
+        item?.arrival_timestamp?.scheduled ||
+        null;
+
+      return {
+        predicted,
+        minutes: getMinutesFromNow(predicted)
+      };
+    }
+
+    async function fetchArrivalForTrip(stopName, tripId) {
+      if (!tripId) {
+        return null;
+      }
+
+      const params = new URLSearchParams();
+      params.append("names[]", stopName);
+      params.append("minutesBefore", "0");
+      params.append("minutesAfter", "120");
+      params.append("order", "real");
+      params.append("limit", "120");
+      params.append("mode", "mixed");
+
+      const board = await fetchFromProxy("/v2/pid/departureboards", params);
+      return getTripStopPrediction(board, tripId);
+    }
+
+    function renderFirstDeparture(next) {
+      if (!next || !next.predicted) {
+        ui.departureTime.textContent = "Žádný vyhovující spoj";
+        ui.departureMinutes.textContent = "Zkuste to za chvíli znovu.";
+        ui.headsign1.textContent = "";
+        return;
+      }
+
+      ui.departureTime.textContent = formatPragueTime(next.predicted);
+      ui.departureMinutes.textContent = `Za ${next.minutes ?? "?"} minut`;
+      ui.headsign1.textContent = `Směr: ${next.headsign || "neznámý"}`;
+    }
+
+    function renderSecondDeparture(next) {
+      if (!next || !next.predicted) {
+        ui.departureTime2.textContent = "—";
+        ui.departureMinutes2.textContent = "Žádný druhý spoj v okně";
+        ui.headsign2.textContent = "";
+        return;
+      }
+
+      ui.departureTime2.textContent = formatPragueTime(next.predicted);
+      ui.departureMinutes2.textContent = `Za ${next.minutes ?? "?"} minut`;
+      ui.headsign2.textContent = `Směr: ${next.headsign || "neznámý"}`;
+    }
+
+    function renderEtaBox(timeElement, minutesElement, etaData) {
+      if (!etaData || !etaData.predicted) {
+        timeElement.textContent = "Pro tento spoj zatím není k dispozici";
+        minutesElement.textContent = "Chybí odpovídající záznam v reálném čase.";
+        return;
+      }
+
+      timeElement.textContent = formatPragueTime(etaData.predicted);
+      const minText = etaData.minutes === null ? "?" : etaData.minutes;
+      minutesElement.textContent = `Za ${minText} minut`;
+    }
+
+    async function refresh() {
+      setStatus("Načítám živá data…");
+      try {
+        const { first, second } = await fetchBusDeparturesFromOrigin();
+        renderFirstDeparture(first);
+        renderSecondDeparture(second);
+
+        const [libezniceEta, ladviEta, libezniceEta2, ladviEta2] = await Promise.all([
+          fetchArrivalForTrip(CONFIG.intermediateStop, first?.tripId),
+          fetchArrivalForTrip(CONFIG.terminusStop, first?.tripId),
+          fetchArrivalForTrip(CONFIG.intermediateStop, second?.tripId),
+          fetchArrivalForTrip(CONFIG.terminusStop, second?.tripId)
+        ]);
+
+        renderEtaBox(ui.libezniceTime, ui.libezniceMinutes, libezniceEta);
+        renderEtaBox(ui.ladviTime, ui.ladviMinutes, ladviEta);
+        renderEtaBox(ui.libezniceTime2, ui.libezniceMinutes2, libezniceEta2);
+        renderEtaBox(ui.ladviTime2, ui.ladviMinutes2, ladviEta2);
+
+        setStatus(`Aktualizováno: ${new Date().toLocaleTimeString("cs-CZ")}`);
+      } catch (error) {
+        setStatus(`Chyba: ${error.message}`);
+      }
+    }
+
+    function startPolling() {
+      if (timerId) {
+        clearInterval(timerId);
+      }
+      refresh();
+      timerId = setInterval(refresh, CONFIG.refreshMs);
+    }
+
+    startPolling();
+  </script>
+</body>
+</html>
