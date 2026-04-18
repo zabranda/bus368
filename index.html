@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bus 368 — Předboj, U Rybníka → Ládví</title>
+  <title>Líbeznice — odjezdy</title>
   <style>
     :root {
       color-scheme: dark;
@@ -106,59 +106,47 @@
       margin-top: 0.8rem;
       color: #cbd3ea;
     }
-
-    a {
-      color: #8bb2ff;
-    }
   </style>
 </head>
 <body>
   <main class="card">
-    <h1>Bus 368: Předboj, U Rybníka → Ládví</h1>
-    <p class="muted">Živé odjezdy a předpokládané příjezdy na trase směr Ládví.</p>
+    <h1>Líbeznice,II — odjezdy</h1>
+    <p class="muted">Živé odjezdy ze zastávky Líbeznice,II.</p>
 
     <div class="columns">
-      <div class="col col--left">
-        <p class="col-title">Nejbližší spoj</p>
+      <div class="col">
+        <p class="col-title">→ Praha, Sídliště Ďáblice</p>
+
         <section class="box">
-          <div class="muted">Odjezd z Předboj, U Rybníka</div>
-          <div id="departureTime" class="value">Načítám data…</div>
-          <div id="departureMinutes" class="muted"></div>
-          <div id="headsign1" class="muted"></div>
+          <div class="muted">Nejbližší spoj</div>
+          <div id="dablice1time" class="value">Načítám…</div>
+          <div id="dablice1minutes" class="muted"></div>
+          <div id="dablice1line" class="muted"></div>
         </section>
 
         <section class="box">
-          <div class="muted">Příjezd do zastávky Líbeznice</div>
-          <div id="libezniceTime" class="value" style="font-size:1.05rem;">Načítám data…</div>
-          <div id="libezniceMinutes" class="muted"></div>
-        </section>
-
-        <section class="box">
-          <div class="muted">Příjezd do zastávky Ládví</div>
-          <div id="ladviTime" class="value" style="font-size:1.05rem;">Načítám data…</div>
-          <div id="ladviMinutes" class="muted"></div>
+          <div class="muted">Druhý nejbližší spoj</div>
+          <div id="dablice2time" class="value">—</div>
+          <div id="dablice2minutes" class="muted"></div>
+          <div id="dablice2line" class="muted"></div>
         </section>
       </div>
 
-      <div class="col col--right">
-        <p class="col-title">Druhý nejbližší spoj</p>
+      <div class="col">
+        <p class="col-title">→ Předboj, U Rybníka</p>
+
         <section class="box">
-          <div class="muted">Odjezd z Předboj, U Rybníka</div>
-          <div id="departureTime2" class="value">—</div>
-          <div id="departureMinutes2" class="muted"></div>
-          <div id="headsign2" class="muted"></div>
+          <div class="muted">Nejbližší spoj</div>
+          <div id="predboj1time" class="value">Načítám…</div>
+          <div id="predboj1minutes" class="muted"></div>
+          <div id="predboj1line" class="muted"></div>
         </section>
 
         <section class="box">
-          <div class="muted">Příjezd do zastávky Líbeznice</div>
-          <div id="libezniceTime2" class="value" style="font-size:1.05rem;">—</div>
-          <div id="libezniceMinutes2" class="muted"></div>
-        </section>
-
-        <section class="box">
-          <div class="muted">Příjezd do zastávky Ládví</div>
-          <div id="ladviTime2" class="value" style="font-size:1.05rem;">—</div>
-          <div id="ladviMinutes2" class="muted"></div>
+          <div class="muted">Druhý nejbližší spoj</div>
+          <div id="predboj2time" class="value">—</div>
+          <div id="predboj2minutes" class="muted"></div>
+          <div id="predboj2line" class="muted"></div>
         </section>
       </div>
     </div>
@@ -168,35 +156,30 @@
 
   <script>
     const CONFIG = {
-      stopName: "Předboj,U Rybníka",
-      lineShortName: "368",
-      destinationText: "Ládví",
-      intermediateStop: "Líbeznice,II",
-      terminusStop: "Ládví",
+      stopName: "Líbeznice,II",
+      dabliceDestination: "sidliste dablice",
+      predbojDestination: "predboj",
+      predbojLine: "368",
       refreshMs: 20000,
       timezone: "Europe/Prague",
       proxyEndpoint: "/api/golemio"
     };
 
     const ui = {
-      departureTime: document.getElementById("departureTime"),
-      departureMinutes: document.getElementById("departureMinutes"),
-      headsign1: document.getElementById("headsign1"),
-      libezniceTime: document.getElementById("libezniceTime"),
-      libezniceMinutes: document.getElementById("libezniceMinutes"),
-      ladviTime: document.getElementById("ladviTime"),
-      ladviMinutes: document.getElementById("ladviMinutes"),
-      departureTime2: document.getElementById("departureTime2"),
-      departureMinutes2: document.getElementById("departureMinutes2"),
-      headsign2: document.getElementById("headsign2"),
-      libezniceTime2: document.getElementById("libezniceTime2"),
-      libezniceMinutes2: document.getElementById("libezniceMinutes2"),
-      ladviTime2: document.getElementById("ladviTime2"),
-      ladviMinutes2: document.getElementById("ladviMinutes2"),
+      dablice1time: document.getElementById("dablice1time"),
+      dablice1minutes: document.getElementById("dablice1minutes"),
+      dablice1line: document.getElementById("dablice1line"),
+      dablice2time: document.getElementById("dablice2time"),
+      dablice2minutes: document.getElementById("dablice2minutes"),
+      dablice2line: document.getElementById("dablice2line"),
+      predboj1time: document.getElementById("predboj1time"),
+      predboj1minutes: document.getElementById("predboj1minutes"),
+      predboj1line: document.getElementById("predboj1line"),
+      predboj2time: document.getElementById("predboj2time"),
+      predboj2minutes: document.getElementById("predboj2minutes"),
+      predboj2line: document.getElementById("predboj2line"),
       status: document.getElementById("status")
     };
-
-    let timerId = null;
 
     function normalizeText(value) {
       return (value || "")
@@ -206,200 +189,100 @@
         .trim();
     }
 
-    function setStatus(message) {
-      ui.status.textContent = message;
+    function setStatus(msg) {
+      ui.status.textContent = msg;
     }
 
     function formatPragueTime(isoDate) {
-      const date = new Date(isoDate);
       return new Intl.DateTimeFormat("cs-CZ", {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
         timeZone: CONFIG.timezone
-      }).format(date);
+      }).format(new Date(isoDate));
+    }
+
+    function getMinutesFromNow(isoDate) {
+      if (!isoDate) return null;
+      const ms = new Date(isoDate).getTime();
+      if (isNaN(ms)) return null;
+      return Math.round((ms - Date.now()) / 60000);
     }
 
     async function fetchFromProxy(path, params) {
       const proxyParams = new URLSearchParams();
       proxyParams.append("path", path);
       if (params) {
-        const src = new URLSearchParams(params);
-        for (const [key, value] of src.entries()) {
-          proxyParams.append(key, value);
+        for (const [k, v] of new URLSearchParams(params).entries()) {
+          proxyParams.append(k, v);
         }
       }
-      const query = proxyParams.toString();
-      const relativeUrl = `${CONFIG.proxyEndpoint}?${query}`;
-      const response = await fetch(relativeUrl);
+      const response = await fetch(`${CONFIG.proxyEndpoint}?${proxyParams.toString()}`);
       const rawText = await response.text();
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status} from proxy request`);
-      }
-
-      let parsed;
-      try {
-        parsed = JSON.parse(rawText);
-      } catch (e) {
-        throw new Error(`Invalid JSON from proxy: ${e.message}`);
-      }
-      return parsed;
+      if (!response.ok) throw new Error(`HTTP ${response.status} from proxy request`);
+      return JSON.parse(rawText);
     }
 
-    function getMatchingDepartures(board) {
-      const departures = board?.departures || [];
-      const wantedDestination = normalizeText(CONFIG.destinationText);
-
-      return departures.filter((item) => {
-        const line = String(item?.route?.short_name || "");
-        const headsign = normalizeText(item?.trip?.headsign || "");
-        return line === CONFIG.lineShortName && headsign.includes(wantedDestination);
-      });
-    }
-
-    function departureToSummary(departure) {
-      if (!departure) return null;
+    function departureToSummary(dep) {
+      if (!dep) return null;
       const predicted =
-        departure?.departure_timestamp?.predicted ||
-        departure?.departure_timestamp?.scheduled ||
-        null;
-      return {
-        tripId: departure?.trip?.id || null,
-        headsign: departure?.trip?.headsign || "",
-        predicted,
-        minutes:
-          departure?.departure_timestamp?.minutes ??
-          (predicted ? getMinutesFromNow(predicted) : null),
-        delaySeconds: departure?.delay?.seconds || null
-      };
-    }
-
-    function getMinutesFromNow(isoDate) {
-      if (!isoDate) return null;
-      const targetMs = new Date(isoDate).getTime();
-      if (Number.isNaN(targetMs)) return null;
-      return Math.round((targetMs - Date.now()) / 60000);
-    }
-
-    async function fetchBusDeparturesFromOrigin() {
-      const params = new URLSearchParams();
-      params.append("names[]", CONFIG.stopName);
-      params.append("minutesBefore", "1");
-      params.append("minutesAfter", "720");
-      params.append("order", "real");
-      params.append("limit", "80");
-      params.append("mode", "departures");
-
-      const board = await fetchFromProxy("/v2/pid/departureboards", params);
-      const matches = getMatchingDepartures(board);
-
-      return {
-        first: departureToSummary(matches[0] || null),
-        second: departureToSummary(matches[1] || null)
-      };
-    }
-
-    function getTripStopPrediction(board, tripId) {
-      const departures = board?.departures || [];
-      if (!tripId) return null;
-
-      const item = departures.find((departure) => {
-        const line = String(departure?.route?.short_name || "");
-        const depTripId = departure?.trip?.id || "";
-        return line === CONFIG.lineShortName && depTripId === tripId;
-      }) || null;
-
-      if (!item) return null;
-
-      const predicted =
-        item?.departure_timestamp?.predicted ||
-        item?.arrival_timestamp?.predicted ||
-        item?.departure_timestamp?.scheduled ||
-        item?.arrival_timestamp?.scheduled ||
-        null;
-
+        dep?.departure_timestamp?.predicted ||
+        dep?.departure_timestamp?.scheduled || null;
       return {
         predicted,
-        minutes: getMinutesFromNow(predicted)
+        minutes: dep?.departure_timestamp?.minutes ?? getMinutesFromNow(predicted),
+        line: dep?.route?.short_name || "?",
+        headsign: dep?.trip?.headsign || ""
       };
     }
 
-    async function fetchArrivalForTrip(stopName, tripId) {
-      if (!tripId) return null;
-
-      const params = new URLSearchParams();
-      params.append("names[]", stopName);
-      params.append("minutesBefore", "0");
-      params.append("minutesAfter", "120");
-      params.append("order", "real");
-      params.append("limit", "120");
-      params.append("mode", "mixed");
-
-      const board = await fetchFromProxy("/v2/pid/departureboards", params);
-      return getTripStopPrediction(board, tripId);
-    }
-
-    function renderFirstDeparture(next) {
-      if (!next || !next.predicted) {
-        ui.departureTime.textContent = "Žádný vyhovující spoj";
-        ui.departureMinutes.textContent = "Zkuste to za chvíli znovu.";
-        ui.headsign1.textContent = "";
+    function renderBox(timeEl, minutesEl, lineEl, data, emptyMsg) {
+      if (!data || !data.predicted) {
+        timeEl.textContent = emptyMsg || "Žádný spoj";
+        minutesEl.textContent = "";
+        lineEl.textContent = "";
         return;
       }
-      ui.departureTime.textContent = formatPragueTime(next.predicted);
-      ui.departureMinutes.textContent = `Za ${next.minutes ?? "?"} minut`;
-      ui.headsign1.textContent = `Směr: ${next.headsign || "neznámý"}`;
-    }
-
-    function renderSecondDeparture(next) {
-      if (!next || !next.predicted) {
-        ui.departureTime2.textContent = "—";
-        ui.departureMinutes2.textContent = "Žádný druhý spoj v okně";
-        ui.headsign2.textContent = "";
-        return;
-      }
-      ui.departureTime2.textContent = formatPragueTime(next.predicted);
-      ui.departureMinutes2.textContent = `Za ${next.minutes ?? "?"} minut`;
-      ui.headsign2.textContent = `Směr: ${next.headsign || "neznámý"}`;
-    }
-
-    function renderEtaBox(timeElement, minutesElement, etaData) {
-      if (!etaData || !etaData.predicted) {
-        timeElement.textContent = "Pro tento spoj zatím není k dispozici";
-        minutesElement.textContent = "Chybí odpovídající záznam v reálném čase.";
-        return;
-      }
-      timeElement.textContent = formatPragueTime(etaData.predicted);
-      const minText = etaData.minutes === null ? "?" : etaData.minutes;
-      minutesElement.textContent = `Za ${minText} minut`;
+      timeEl.textContent = formatPragueTime(data.predicted);
+      minutesEl.textContent = `Za ${data.minutes ?? "?"} minut`;
+      lineEl.textContent = `Linka ${data.line} — ${data.headsign}`;
     }
 
     async function refresh() {
       setStatus("Načítám živá data…");
       try {
-        const { first, second } = await fetchBusDeparturesFromOrigin();
-        renderFirstDeparture(first);
-        renderSecondDeparture(second);
+        const params = new URLSearchParams();
+        params.append("names[]", CONFIG.stopName);
+        params.append("minutesBefore", "1");
+        params.append("minutesAfter", "720");
+        params.append("order", "real");
+        params.append("limit", "80");
+        params.append("mode", "departures");
 
-        const [libezniceEta, ladviEta, libezniceEta2, ladviEta2] = await Promise.all([
-          fetchArrivalForTrip(CONFIG.intermediateStop, first?.tripId),
-          fetchArrivalForTrip(CONFIG.terminusStop, first?.tripId),
-          fetchArrivalForTrip(CONFIG.intermediateStop, second?.tripId),
-          fetchArrivalForTrip(CONFIG.terminusStop, second?.tripId)
-        ]);
+        const board = await fetchFromProxy("/v2/pid/departureboards", params);
+        const departures = board?.departures || [];
 
-        renderEtaBox(ui.libezniceTime, ui.libezniceMinutes, libezniceEta);
-        renderEtaBox(ui.ladviTime, ui.ladviMinutes, ladviEta);
-        renderEtaBox(ui.libezniceTime2, ui.libezniceMinutes2, libezniceEta2);
-        renderEtaBox(ui.ladviTime2, ui.ladviMinutes2, ladviEta2);
+        const dabliceMatches = departures.filter(d =>
+          normalizeText(d?.trip?.headsign || "").includes(CONFIG.dabliceDestination)
+        );
+
+        const predbojMatches = departures.filter(d =>
+          String(d?.route?.short_name || "") === CONFIG.predbojLine &&
+          normalizeText(d?.trip?.headsign || "").includes(CONFIG.predbojDestination)
+        );
+
+        renderBox(ui.dablice1time, ui.dablice1minutes, ui.dablice1line, departureToSummary(dabliceMatches[0]), "Žádný spoj");
+        renderBox(ui.dablice2time, ui.dablice2minutes, ui.dablice2line, departureToSummary(dabliceMatches[1]), "—");
+        renderBox(ui.predboj1time, ui.predboj1minutes, ui.predboj1line, departureToSummary(predbojMatches[0]), "Žádný spoj");
+        renderBox(ui.predboj2time, ui.predboj2minutes, ui.predboj2line, departureToSummary(predbojMatches[1]), "—");
 
         setStatus(`Aktualizováno: ${new Date().toLocaleTimeString("cs-CZ")}`);
-      } catch (error) {
-        setStatus(`Chyba: ${error.message}`);
+      } catch (err) {
+        setStatus(`Chyba: ${err.message}`);
       }
     }
 
+    let timerId = null;
     function startPolling() {
       if (timerId) clearInterval(timerId);
       refresh();
